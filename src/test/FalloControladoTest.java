@@ -1,4 +1,4 @@
-package com.mgcss.proyecto;
+/*package com.mgcss.proyecto;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -11,3 +11,4 @@ public class FalloControladoTest {
         fail("Fallo provocado para verificar la Integración Continua");
     }
 }
+*/
