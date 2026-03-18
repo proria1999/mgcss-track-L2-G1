@@ -1,12 +1,13 @@
-package com.mgcss;
+package com.mgcss.proyecto;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class FalloControladoTest {
 
     @Test
-    void testFalloControlado() {
-        assertEquals(1, 2); // Esto siempre falla
+    void testDebeFallar() {
+        // Este fallo es deliberado para cumplir con el Paso 5 de la Sesión 3
+        fail("Fallo provocado para verificar la Integración Continua");
     }
 }
