@@ -1,0 +1,27 @@
+name: Java CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # PASO 1: Checkout (Requisito: "checkout")
+      - uses: actions/checkout@v4
+
+      # PASO 2: Configurar Java (Requisito: "setup-java")
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      # PASO 3 y 4: Compilar y Testear (Requisito: "build" y "test")
+      - name: Build and Test with Maven
+        run: mvn -B package --file pom.xml
