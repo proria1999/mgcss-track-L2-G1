@@ -31,4 +31,19 @@ public class Solicitud {
         }
         this.tecnicoAsignado = tecnico;
     }
+
+	public void iniciarProceso() {
+    if (this.estado != EstadoSolicitud.ABIERTA) {
+        throw new IllegalStateException("Solo se puede iniciar desde ABIERTA");
+    }
+    this.estado = EstadoSolicitud.EN_PROCESO;
+	}
+
+	public boolean estaCerrada() {
+		return this.estado == EstadoSolicitud.CERRADA;
+	}
+
+	public boolean tieneTecnicoAsignado() {
+		return this.tecnicoAsignado != null;
+	}
 }
