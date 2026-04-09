@@ -114,4 +114,5 @@ class SolicitudTest {
         assertNotNull(EspecialidadTecnico.values());
         assertEquals(EspecialidadTecnico.MANTENIMIENTO, EspecialidadTecnico.valueOf("MANTENIMIENTO"));
     }
+    // Ejecutado el archivo con Run as > JUnit Test
 }
