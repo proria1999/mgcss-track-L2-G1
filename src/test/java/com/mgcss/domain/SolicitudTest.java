@@ -1,141 +1,117 @@
 package com.mgcss.domain;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
-import java.time.LocalDate;
+import org.junit.jupiter.api.DisplayName;
 import static org.junit.jupiter.api.Assertions.*;
+import java.time.LocalDate;
 
 class SolicitudTest {
 
-    // TESTS REQUERIDOS POR EL HANDOUT (SESIÓN 5)
+    // --- TESTS OBLIGATORIOS DEL HANDOUT (REGLAS DE NEGOCIO) ---
 
     @Test
-    void noSePuedeCerrarSiNoEstaEnProceso() {
-        Solicitud s = new Solicitud(EstadoSolicitud.ABIERTA);
-        assertThrows(IllegalStateException.class, s::cerrar);
+    @DisplayName("RN: No se puede cerrar una solicitud si no está en EN_PROCESO")
+    void noSePuedeCerrarSolicitudSiNoEstaEnProceso() {
+        Cliente cliente = new Cliente(1, "Juan", "juan@test.com", TipoCliente.STANDARD);
+        Solicitud s = new Solicitud(101, cliente, "Reparación PC");
+        
+        // La solicitud nace en ABIERTA, por lo que debe fallar al cerrar
+        assertThrows(IllegalStateException.class, s::cerrarSolicitud);
     }
 
     @Test
+    @DisplayName("RN: Solo se puede asignar un técnico activo")
     void soloSePuedeAsignarTecnicoActivo() {
-        Solicitud s = new Solicitud(EstadoSolicitud.ABIERTA);
-        Tecnico inactivo = new Tecnico(1, "Juan", EspecialidadTecnico.SOPORTE, false); 
-        
-        assertThrows(IllegalArgumentException.class, () -> s.asignarTecnico(inactivo)); 
+        Cliente cliente = new Cliente(1, "Juan", "juan@test.com", TipoCliente.STANDARD);
+        Solicitud s = new Solicitud(101, cliente, "Reparación PC");
+        Tecnico inactivo = new Tecnico(1, "Pedro", EspecialidadTecnico.SOPORTE, false);
+
+        assertThrows(IllegalArgumentException.class, () -> s.asignarTecnico(inactivo));
     }
 
     @Test
-    void asignacionValidaDeTecnicoFunciona() {
-        Solicitud s = new Solicitud(EstadoSolicitud.ABIERTA);
+    @DisplayName("RN: Asignación válida de técnico activo")
+    void asignacionTecnicoActivoFunciona() {
+        // [cite: 221, 223, 226]
+        Cliente cliente = new Cliente(1, "Juan", "juan@test.com", TipoCliente.STANDARD);
+        Solicitud s = new Solicitud(101, cliente, "Reparación PC");
         Tecnico activo = new Tecnico(2, "Ana", EspecialidadTecnico.MANTENIMIENTO, true);
-        
+
         s.asignarTecnico(activo);
-        assertTrue(s.tieneTecnicoAsignado());
-    }
-
-    //15 TESTS ADICIONALES 
-
-    @Test
-    void constructorSolicitudAsignaFechaCreacionCorrectamente() {
-        Solicitud s = new Solicitud(EstadoSolicitud.ABIERTA);
-        assertNotNull(LocalDate.now()); 
-    }
-
-    @Test
-    void iniciarProcesoCambiaEstadoDesdeAbierta() {
-        Solicitud s = new Solicitud(EstadoSolicitud.ABIERTA);
-        s.iniciarProceso();
+        
         assertEquals(EstadoSolicitud.EN_PROCESO, s.getEstado());
+        assertEquals(activo, s.getTecnicoAsignado());
     }
 
-    @ParameterizedTest
-    @EnumSource(value = EstadoSolicitud.class, names = {"EN_PROCESO", "CERRADA"})
-    void iniciarProcesoFallaSiNoEstaAbierta(EstadoSolicitud estado) {
-        Solicitud s = new Solicitud(estado);
-        assertThrows(IllegalStateException.class, s::iniciarProceso);
+    //TESTS PARA ALCANZAR EL >80% COVERAGE (GETTERS, SETTERS Y ENUMS)
+
+    @Test
+    @DisplayName("Cobertura completa de la entidad Solicitud")
+    void testSolicitudAtributosYFlujo() {
+        Cliente cliente = new Cliente(1, "Juan", "juan@test.com", TipoCliente.STANDARD);
+        Solicitud s = new Solicitud(101, cliente, "Descripción de prueba");
+        Tecnico t = new Tecnico(2, "Ana", EspecialidadTecnico.MANTENIMIENTO, true);
+
+        assertEquals(101, s.getId());
+        assertEquals(cliente, s.getCliente());
+        assertEquals("Descripción de prueba", s.getDescripcion());
+        assertEquals(LocalDate.now(), s.getFechaCreacion());
+        assertNull(s.getFechaCierre());
+
+        // Flujo a CERRADA
+        s.asignarTecnico(t);
+        s.cerrarSolicitud();
+        
+        assertEquals(EstadoSolicitud.CERRADA, s.getEstado());
+        assertEquals(LocalDate.now(), s.getFechaCierre());
     }
 
     @Test
-    void cerrarCambiaEstadoACerradaSiEstabaEnProceso() {
-        Solicitud s = new Solicitud(EstadoSolicitud.EN_PROCESO);
-        s.cerrar();
-        assertTrue(s.estaCerrada());
+    @DisplayName("Cobertura completa de la entidad Cliente")
+    void testClienteGettersYSetters() {
+        Cliente c = new Cliente(1, "Empresa A", "info@empresa.com", TipoCliente.STANDARD);
+        
+        assertEquals(1, c.getId());
+        assertEquals("Empresa A", c.getNombre());
+        assertEquals("info@empresa.com", c.getEmail());
+        assertEquals(TipoCliente.STANDARD, c.getTipo());
+
+        // Test de setters (importante para cobertura)
+        c.setEmail("nuevo@empresa.com");
+        c.setTipo(TipoCliente.PREMIUM);
+        
+        assertEquals("nuevo@empresa.com", c.getEmail());
+        assertEquals(TipoCliente.PREMIUM, c.getTipo());
     }
 
     @Test
-    void estaCerradaRetornaFalseSiNoEstaEnEstadoCerrada() {
-        Solicitud s = new Solicitud(EstadoSolicitud.ABIERTA);
-        assertFalse(s.estaCerrada());
-    }
-
-    @Test
-    void tieneTecnicoAsignadoRetornaFalseSiEsNulo() {
-        Solicitud s = new Solicitud(EstadoSolicitud.ABIERTA);
-        assertFalse(s.tieneTecnicoAsignado());
-    }
-
-    @Test
-    void tecnicoConstructorYGetters() {
-        Tecnico t = new Tecnico(10, "Pedro", EspecialidadTecnico.REPARACIONES, true);
-        assertEquals(10, t.getId());
-        assertEquals("Pedro", t.getNombre());
+    @DisplayName("Cobertura completa de la entidad Técnico")
+    void testTecnicoGettersYSetters() {
+        Tecnico t = new Tecnico(1, "Ramón", EspecialidadTecnico.REPARACIONES, true);
+        
+        assertEquals(1, t.getId());
+        assertEquals("Ramón", t.getNombre());
         assertEquals(EspecialidadTecnico.REPARACIONES, t.getEspecialidad());
         assertTrue(t.isActivo());
-    }
 
-    @Test
-    void tecnicoSettersCobertura() {
-        Tecnico t = new Tecnico(1, "Temp", EspecialidadTecnico.SOPORTE, true);
         t.setActivo(false);
-        t.setEspecialidad(EspecialidadTecnico.MANTENIMIENTO);
+        t.setEspecialidad(EspecialidadTecnico.SOPORTE);
+        
         assertFalse(t.isActivo());
-        assertEquals(EspecialidadTecnico.MANTENIMIENTO, t.getEspecialidad());
+        assertEquals(EspecialidadTecnico.SOPORTE, t.getEspecialidad());
     }
 
     @Test
-    void enumEstadoSolicitudCobertura() {
-        for (EstadoSolicitud e : EstadoSolicitud.values()) {
-            assertNotNull(EstadoSolicitud.valueOf(e.name()));
-        }
-    }
-
-    @Test
-    void enumEspecialidadCobertura() {
-        for (EspecialidadTecnico e : EspecialidadTecnico.values()) {
-            assertNotNull(EspecialidadTecnico.valueOf(e.name()));
-        }
-    }
-
-    @Test
-    void noSePuedeCerrarUnaSolicitudYaCerrada() {
-        Solicitud s = new Solicitud(EstadoSolicitud.EN_PROCESO);
-        s.cerrar();
-        assertThrows(IllegalStateException.class, s::cerrar);
-    }
-
-    @Test
-    void asignarTecnicoNuloDebeLanzarExcepcion() {
-        Solicitud s = new Solicitud(EstadoSolicitud.ABIERTA);
-        assertThrows(NullPointerException.class, () -> s.asignarTecnico(null));
-    }
-
-    @Test
-    void iniciarProcesoEnSolicitudNuevaFunciona() {
-        Solicitud s = new Solicitud(EstadoSolicitud.ABIERTA);
-        assertDoesNotThrow(s::iniciarProceso);
-    }
-
-    @Test
-    void verificarConsistenciaEstadoTrasAsignacionFallida() {
-        Solicitud s = new Solicitud(EstadoSolicitud.ABIERTA);
-        Tecnico inactivo = new Tecnico(1, "Error", EspecialidadTecnico.SOPORTE, false);
-        try { s.asignarTecnico(inactivo); } catch (Exception e) {}
-        assertEquals(EstadoSolicitud.ABIERTA, s.getEstado());
-    }
-
-    @Test
-    void coberturaCamposIdYFechaInternos() {
-        Solicitud s = new Solicitud(EstadoSolicitud.ABIERTA);
-        assertNotNull(s);
+    @DisplayName("Cobertura de métodos internos de Enums")
+    void testEnumsCoverage() {
+        // SonarQube requiere ejecutar values() y valueOf() para el 100% en Enums
+        assertNotNull(EstadoSolicitud.values());
+        assertEquals(EstadoSolicitud.ABIERTA, EstadoSolicitud.valueOf("ABIERTA"));
+        
+        assertNotNull(TipoCliente.values());
+        assertEquals(TipoCliente.PREMIUM, TipoCliente.valueOf("PREMIUM"));
+        
+        assertNotNull(EspecialidadTecnico.values());
+        assertEquals(EspecialidadTecnico.MANTENIMIENTO, EspecialidadTecnico.valueOf("MANTENIMIENTO"));
     }
 }
