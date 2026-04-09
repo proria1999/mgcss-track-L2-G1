@@ -114,5 +114,14 @@ class SolicitudTest {
         assertNotNull(EspecialidadTecnico.values());
         assertEquals(EspecialidadTecnico.MANTENIMIENTO, EspecialidadTecnico.valueOf("MANTENIMIENTO"));
     }
-    // Ejecutado el archivo con Run as > JUnit Test
+    /*
+     * 	Haz clic derecho sobre tu proyecto mgcss-track-L2-G1.
+
+		Selecciona Run As → Maven build... (el que tiene los puntos suspensivos).
+
+		En la ventana que se abre, en el campo Goals, escribe exactamente:
+		clean verify
+
+		Haz clic en Run.
+     */
 }
