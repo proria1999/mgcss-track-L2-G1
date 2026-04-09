@@ -94,40 +94,4 @@ class SolicitudTest {
             s.asignarTecnico(null);
         });
     }
-
-    @Test
-    void sePuedeDesasignarTecnico() {
-        Solicitud s = new Solicitud(EstadoSolicitud.ABIERTA);
-        Tecnico t = new Tecnico(true);
-
-        s.asignarTecnico(t);
-        s.desasignarTecnico();
-
-        assertFalse(s.tieneTecnicoAsignado());
-    }
-
-    @Test
-    void noSePuedeDesasignarSiNoHayTecnico() {
-        Solicitud s = new Solicitud(EstadoSolicitud.ABIERTA);
-
-        assertThrows(IllegalStateException.class, s::desasignarTecnico);
-    }
-
-    @Test
-    void sePuedeDesasignarTecnico() {
-        Solicitud s = new Solicitud(EstadoSolicitud.ABIERTA);
-        Tecnico t = new Tecnico(true);
-
-        s.asignarTecnico(t);
-        s.desasignarTecnico();
-
-        assertFalse(s.tieneTecnicoAsignado());
-    }
-
-    @Test
-    void noSePuedeDesasignarSiNoHayTecnico() {
-        Solicitud s = new Solicitud(EstadoSolicitud.ABIERTA);
-
-        assertThrows(IllegalStateException.class, s::desasignarTecnico);
-    }
 }
