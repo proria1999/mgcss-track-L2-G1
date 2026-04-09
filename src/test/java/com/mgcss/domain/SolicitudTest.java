@@ -32,7 +32,7 @@ class SolicitudTest {
     @Test
     @DisplayName("RN: Asignación válida de técnico activo")
     void asignacionTecnicoActivoFunciona() {
-        // [cite: 221, 223, 226]
+   
         Cliente cliente = new Cliente(1, "Juan", "juan@test.com", TipoCliente.STANDARD);
         Solicitud s = new Solicitud(101, cliente, "Reparación PC");
         Tecnico activo = new Tecnico(2, "Ana", EspecialidadTecnico.MANTENIMIENTO, true);
