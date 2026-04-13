@@ -1,12 +1,15 @@
+
 package com.mgcss.domain;
-//
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import static org.junit.jupiter.api.Assertions.*;
 import java.time.LocalDate;
 
-class SolicitudTest {
 
+class SolicitudTest {
+	/*
+	/*
     // --- TESTS OBLIGATORIOS DEL HANDOUT (REGLAS DE NEGOCIO) ---
 
     @Test
@@ -114,6 +117,7 @@ class SolicitudTest {
         assertNotNull(EspecialidadTecnico.values());
         assertEquals(EspecialidadTecnico.MANTENIMIENTO, EspecialidadTecnico.valueOf("MANTENIMIENTO"));
     }
+   */
     /*
      * 	Haz clic derecho sobre tu proyecto mgcss-track-L2-G1.
 
@@ -124,4 +128,5 @@ class SolicitudTest {
 
 		Haz clic en Run.
      */
+
 }

@@ -1,11 +1,9 @@
 package com.mgcss.infrastructure;
 
-import org.springframework.data.repository.CrudRepository; // o JpaRepository
-
+import java.util.Optional;
 import com.mgcss.domain.Tecnico;
 
-
-public interface TecnicoRepository extends CrudRepository<Tecnico, Long> {
-    // findById(Long id) ya está incluido aquí por defecto.
-    // Devuelve un Optional<Tecnico>.
+public interface TecnicoRepository {
+    Optional<Tecnico> findById(Long id);
+    Tecnico save(Tecnico tecnico);
 }
