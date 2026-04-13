@@ -22,6 +22,15 @@ public class Solicitud {
         this.fechaCierre = null;
     }
     
+    public void actualizarEstado(EstadoSolicitud nuevoEstado) {
+        if (this.estado == EstadoSolicitud.CERRADA) {
+            throw new IllegalStateException("No se puede cambiar el estado de una solicitud ya cerrada.");
+        }
+        
+        // Aquí podrías añadir más reglas de transición de estados
+        this.estado = nuevoEstado;
+    }
+    
 	public void asignarTecnico(Tecnico tecnico) {
 	    if (!tecnico.isActivo()) {
 	        throw new IllegalArgumentException("Solo se puede asignar un técnico activo.");
