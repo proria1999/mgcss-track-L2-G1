@@ -16,7 +16,7 @@ class SolicitudTest {
         LocalDate fechaCualquiera = LocalDate.of(2026, 1, 1);
         String desc = "Fallo en sistema";
 
-        // 2. Test del Constructor (Cubre líneas 15-23 y estado inicial)
+        // 2. Test del Constructor 
         Solicitud solicitud = new Solicitud(1, clienteInicial, desc);
 
         assertEquals(1, solicitud.getId());

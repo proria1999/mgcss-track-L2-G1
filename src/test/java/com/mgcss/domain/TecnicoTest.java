@@ -9,13 +9,12 @@ class TecnicoTest {
         // Test del constructor y estado inicial 
         Tecnico tecnico = new Tecnico(1, "Juan", EspecialidadTecnico.REPARACIONES, true);
 
-        // Test de setters (Elimina marcas rojas)
         tecnico.setId(5);
         tecnico.setNombre("Pedro");
         tecnico.setEspecialidad(EspecialidadTecnico.MANTENIMIENTO);
         tecnico.setActivo(false);
 
-        // Test de getters (Elimina marcas rojas)
+
         assertEquals(5, tecnico.getId());
         assertEquals("Pedro", tecnico.getNombre());
         assertEquals(EspecialidadTecnico.MANTENIMIENTO, tecnico.getEspecialidad());
