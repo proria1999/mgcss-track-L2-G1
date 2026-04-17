@@ -7,7 +7,7 @@ class ClienteTest {
     @Test
     void testClienteFullCoverage() {
         // Test del constructor y estado inicial 
-        Cliente cliente = new Cliente(1, "Usuario", "test@mail.com", TipoCliente.STANDARD);
+        Cliente cliente = new Cliente(1, "Usuario", "test@mail.com", TipoCliente.PREMIUM);
 
         // Test de setters (Elimina marcas rojas)
         cliente.setId(10);

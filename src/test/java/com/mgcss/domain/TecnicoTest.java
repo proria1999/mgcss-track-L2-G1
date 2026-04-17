@@ -12,7 +12,7 @@ class TecnicoTest {
         // Test de setters (Elimina marcas rojas)
         tecnico.setId(5);
         tecnico.setNombre("Pedro");
-        tecnico.setEspecialidad(EspecialidadTecnico.SOPORTE);
+        tecnico.setEspecialidad(EspecialidadTecnico.MANTENIMIENTO);
         tecnico.setActivo(false);
 
         // Test de getters (Elimina marcas rojas)
