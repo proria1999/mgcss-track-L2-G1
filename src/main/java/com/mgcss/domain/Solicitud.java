@@ -21,49 +21,62 @@ public class Solicitud {
         this.tecnicoAsignado = null;
         this.fechaCierre = null;
     }
-    
-	public void asignarTecnico(Tecnico tecnico) {
-	    if (!tecnico.isActivo()) {
-	        throw new IllegalArgumentException("Solo se puede asignar un técnico activo.");
-	    }
-		this.tecnicoAsignado = tecnico;
-		this.estado = EstadoSolicitud.EN_PROCESO;
-	}
-	
-	public void cerrarSolicitud() {
-	    if (this.estado != EstadoSolicitud.EN_PROCESO) {
-	        throw new IllegalStateException("Solo se puede cerrar una solicitud si está EN_PROCESO.");
-	    }
-		this.estado = EstadoSolicitud.CERRADA;
-		this.fechaCierre = LocalDate.now();
-	}
 
-	public EstadoSolicitud getEstado() {
-		return estado;
-	}
-
-	public Tecnico getTecnicoAsignado() {
-		return tecnicoAsignado;
-	}
-	
 	public int getId() {
 		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public Cliente getCliente() {
 		return cliente;
 	}
 
+	public void setCliente(Cliente cliente) {
+		this.cliente = cliente;
+	}
+
 	public String getDescripcion() {
 		return descripcion;
+	}
+
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
 	}
 
 	public LocalDate getFechaCreacion() {
 		return fechaCreacion;
 	}
 
+	public void setFechaCreacion(LocalDate fechaCreacion) {
+		this.fechaCreacion = fechaCreacion;
+	}
+
+	public EstadoSolicitud getEstado() {
+		return estado;
+	}
+
+	public void setEstado(EstadoSolicitud estado) {
+		this.estado = estado;
+	}
+
+	public Tecnico getTecnicoAsignado() {
+		return tecnicoAsignado;
+	}
+
+	public void setTecnicoAsignado(Tecnico tecnicoAsignado) {
+		this.tecnicoAsignado = tecnicoAsignado;
+	}
+
 	public LocalDate getFechaCierre() {
 		return fechaCierre;
 	}
+
+	public void setFechaCierre(LocalDate fechaCierre) {
+		this.fechaCierre = fechaCierre;
+	}
+    
 	
 }
