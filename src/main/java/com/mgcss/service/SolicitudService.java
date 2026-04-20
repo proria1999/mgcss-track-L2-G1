@@ -2,19 +2,22 @@ package com.mgcss.service;
 
 import com.mgcss.domain.*;
 import com.mgcss.infrastructure.*;
+import com.mgcss.infrastructure.persistence.JpaSolicitudRepository;
+import com.mgcss.infrastructure.persistence.SolicitudEntity;
+
 import java.time.LocalDate;
 
 public class SolicitudService {
-    private final SolicitudRepository solicitudRepository;
+    private final JpaSolicitudRepository solicitudRepository;
     private final TecnicoRepository tecnicoRepository;
 
-    public SolicitudService(SolicitudRepository solicitudRepository, TecnicoRepository tecnicoRepository) {
+    public SolicitudService(JpaSolicitudRepository solicitudRepository, TecnicoRepository tecnicoRepository) {
         this.solicitudRepository = solicitudRepository;
         this.tecnicoRepository = tecnicoRepository;
     }
 
     public void asignarTecnico(Long solicitudId, Long tecnicoId) {
-        Solicitud solicitud = solicitudRepository.findById(solicitudId)
+        SolicitudEntity solicitud = solicitudRepository.findById(solicitudId)
                 .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
 
         Tecnico tecnico = tecnicoRepository.findById(tecnicoId)
@@ -30,7 +33,7 @@ public class SolicitudService {
     }
 
     public void cerrarSolicitud(Long solicitudId) {
-        Solicitud solicitud = solicitudRepository.findById(solicitudId)
+        SolicitudEntity solicitud = solicitudRepository.findById(solicitudId)
                 .orElseThrow(() -> new RuntimeException("No existe la solicitud"));
 
         if (solicitud.getEstado() != EstadoSolicitud.EN_PROCESO) {
@@ -43,7 +46,7 @@ public class SolicitudService {
     }
     
     public void cambiarEstado(Long solicitudId, EstadoSolicitud nuevoEstado) {
-        Solicitud solicitud = solicitudRepository.findById(solicitudId)
+        SolicitudEntity solicitud = solicitudRepository.findById(solicitudId)
                 .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
 
         // Validación de negocio: No se puede cambiar el estado de una cerrada

@@ -1,4 +1,4 @@
-package com.mgcss.service;
+package com.mgcss.unit;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -11,13 +11,18 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.mgcss.domain.*;
+import com.mgcss.domain.EspecialidadTecnico;
+import com.mgcss.domain.EstadoSolicitud;
+import com.mgcss.domain.Tecnico;
 import com.mgcss.infrastructure.*;
+import com.mgcss.infrastructure.persistence.JpaSolicitudRepository;
+import com.mgcss.infrastructure.persistence.SolicitudEntity;
+import com.mgcss.service.SolicitudService;
 
 @ExtendWith(MockitoExtension.class)
 class SolicitudServiceTest {
 
-    @Mock private SolicitudRepository solicitudRepository;
+    @Mock private JpaSolicitudRepository solicitudRepository;
     @Mock private TecnicoRepository tecnicoRepository;
     @InjectMocks private SolicitudService solicitudService;
 
@@ -25,7 +30,7 @@ class SolicitudServiceTest {
     @DisplayName("RN: No se puede asignar un técnico inactivo")
     void soloSePuedeAsignarTecnicoActivo() {
         // Arrange
-        Solicitud s = new Solicitud(1, null, "Test");
+        SolicitudEntity s = new SolicitudEntity(1, null, "Test");
         Tecnico inactivo = new Tecnico(2, "Pepe", EspecialidadTecnico.SOPORTE, false);
         when(solicitudRepository.findById(1L)).thenReturn(Optional.of(s));
         when(tecnicoRepository.findById(2L)).thenReturn(Optional.of(inactivo));
@@ -34,14 +39,14 @@ class SolicitudServiceTest {
         assertThrows(IllegalArgumentException.class, () -> solicitudService.asignarTecnico(1L, 2L));
         
         // Verify: Se comprueba que NUNCA se llamó a save debido al error 
-        verify(solicitudRepository, never()).save(any(Solicitud.class));
+        verify(solicitudRepository, never()).save(any(SolicitudEntity.class));
     }
 
     @Test
     @DisplayName("RN: No se puede cerrar solicitud si no está EN_PROCESO")
     void noCerrarSiNoEstaEnProceso() {
         // Arrange
-        Solicitud s = new Solicitud(1, null, "Test");
+        SolicitudEntity s = new SolicitudEntity(1, null, "Test");
         s.setEstado(EstadoSolicitud.ABIERTA); 
         when(solicitudRepository.findById(1L)).thenReturn(Optional.of(s));
 
@@ -49,14 +54,14 @@ class SolicitudServiceTest {
         assertThrows(IllegalStateException.class, () -> solicitudService.cerrarSolicitud(1L));
         
         // Verify
-        verify(solicitudRepository, never()).save(any(Solicitud.class));
+        verify(solicitudRepository, never()).save(any(SolicitudEntity.class));
     }
 
     @Test
     @DisplayName("RN: No se puede cambiar estado de una solicitud CERRADA")
     void noCambiarEstadoSiYaEstaCerrada() {
         // Arrange
-        Solicitud s = new Solicitud(1, null, "Test");
+        SolicitudEntity s = new SolicitudEntity(1, null, "Test");
         s.setEstado(EstadoSolicitud.CERRADA);
         when(solicitudRepository.findById(1L)).thenReturn(Optional.of(s));
 
@@ -66,14 +71,14 @@ class SolicitudServiceTest {
         });
 
         // Verify
-        verify(solicitudRepository, never()).save(any(Solicitud.class));
+        verify(solicitudRepository, never()).save(any(SolicitudEntity.class));
     }
 
     @Test
     @DisplayName("Verificar que se guarda la solicitud tras cambios válidos")
     void verificarGuardado() {
         // Arrange
-        Solicitud s = new Solicitud(1, null, "Test");
+        SolicitudEntity s = new SolicitudEntity(1, null, "Test");
         s.setEstado(EstadoSolicitud.EN_PROCESO);
         when(solicitudRepository.findById(1L)).thenReturn(Optional.of(s));
 
@@ -84,4 +89,29 @@ class SolicitudServiceTest {
         verify(solicitudRepository, times(1)).save(s);
         assertEquals(EstadoSolicitud.CERRADA, s.getEstado());
     }
+    // FALLO MOCKITO
+    /*
+    @Test
+    void deberiaLanzarExcepcionSiTecnicoInactivo() {
+        // 1. SETUP: Preparar el escenario con un técnico inactivo
+        int tecnicoId = 1;
+        Tecnico tecnicoInactivo = new Tecnico(tecnicoId, "Juan", EspecialidadTecnico.MANTENIMIENTO, false);
+        Solicitud solicitud = new Solicitud(1, );
+
+        // Instruimos al mock para devolver el técnico inactivo
+        when(repository.findById(tecnicoId)).thenReturn(Optional.of(tecnicoInactivo));
+
+        // 2. ASSERT & ACT: Ejecutar esperando la "explosión" 
+        // Usamos assertThrows para capturar la excepción de la regla de negocio 
+        assertThrows(IllegalArgumentException.class, () -> {
+            service.asignar(solicitud, tecnicoId);
+        });
+
+        // 3. VERIFY: Garantizar la ausencia de efectos secundarios
+        // Verificamos que NUNCA se llamó al método save si hubo un error
+        verify(repository, never()).save(any());
+        
+    }
+*/
+    
 }

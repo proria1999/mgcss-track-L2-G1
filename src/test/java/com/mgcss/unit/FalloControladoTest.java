@@ -1,4 +1,4 @@
-package com.mgcss.proyecto;
+package com.mgcss.unit;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.fail;
