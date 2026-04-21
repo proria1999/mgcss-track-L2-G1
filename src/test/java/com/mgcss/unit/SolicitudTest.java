@@ -1,7 +1,13 @@
 
-package com.mgcss.domain;
+package com.mgcss.unit;
 
 import org.junit.jupiter.api.Test;
+
+import com.mgcss.domain.Cliente;
+import com.mgcss.domain.EstadoSolicitud;
+import com.mgcss.domain.Tecnico;
+import com.mgcss.infrastructure.persistence.SolicitudEntity;
+
 import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,7 +23,7 @@ class SolicitudTest {
         String desc = "Fallo en sistema";
 
         // 2. Test del Constructor 
-        Solicitud solicitud = new Solicitud(1, clienteInicial, desc);
+        SolicitudEntity solicitud = new SolicitudEntity(1, clienteInicial, desc);
 
         assertEquals(1, solicitud.getId());
         assertEquals(clienteInicial, solicitud.getCliente());

@@ -1,6 +1,10 @@
-package com.mgcss.domain;
+package com.mgcss.unit;
 
 import org.junit.jupiter.api.Test;
+
+import com.mgcss.domain.Cliente;
+import com.mgcss.domain.TipoCliente;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class ClienteTest {
