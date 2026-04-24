@@ -1,9 +1,9 @@
 package com.mgcss.domain;
 
-//import java.time.LocalDate;
+import java.time.LocalDate;
 
 public class Solicitud {
-/*
+
 	private int id;
 	private Cliente cliente;
 	private String descripcion;
@@ -77,6 +77,4 @@ public class Solicitud {
 	public void setFechaCierre(LocalDate fechaCierre) {
 		this.fechaCierre = fechaCierre;
 	}
-    
-	*/
 }
