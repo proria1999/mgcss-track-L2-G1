@@ -1,22 +1,13 @@
 package com.mgcss.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-
-@Entity
 public class Cliente {
-//
-	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private long id;
 	private String nombre;
 	private String email;
 	private TipoCliente tipo;
 	
 	
-	public Cliente(int id, String nombre, String email, TipoCliente tipo){
+	public Cliente(long id, String nombre, String email, TipoCliente tipo){
 		this.id = id;
 		this.nombre = nombre;
 		this.email = email;
@@ -24,12 +15,12 @@ public class Cliente {
 	}
 
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
 
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 

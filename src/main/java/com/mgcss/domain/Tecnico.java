@@ -1,33 +1,24 @@
 package com.mgcss.domain;
-//
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-
-@Entity
 public class Tecnico {
 
-	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private long id;
 	private String nombre;
 	private EspecialidadTecnico especialidad;
 	private boolean activo;
 	
-	public Tecnico(int id, String nombre, EspecialidadTecnico especialidad, boolean activo) {
+	public Tecnico(long id, String nombre, EspecialidadTecnico especialidad, boolean activo) {
 		this.id = id;
 		this.nombre = nombre;
 		this.especialidad = especialidad;
 		this.activo = activo;
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
