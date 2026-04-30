@@ -16,22 +16,27 @@ import com.mgcss.domain.EstadoSolicitud;
 import com.mgcss.domain.Tecnico;
 import com.mgcss.infrastructure.*;
 import com.mgcss.infrastructure.persistence.JpaSolicitudRepository;
+import com.mgcss.infrastructure.persistence.JpaTecnicoRepository;
 import com.mgcss.infrastructure.persistence.SolicitudEntity;
+import com.mgcss.infrastructure.persistence.TecnicoEntity;
 import com.mgcss.service.SolicitudService;
 
 @ExtendWith(MockitoExtension.class)
 class SolicitudServiceTest {
 
-    @Mock private JpaSolicitudRepository solicitudRepository;
-    @Mock private TecnicoRepository tecnicoRepository;
-    @InjectMocks private SolicitudService solicitudService;
+    @Mock 
+    private JpaSolicitudRepository solicitudRepository;
+    @Mock 
+    private JpaTecnicoRepository tecnicoRepository;
+    @InjectMocks 
+    private SolicitudService solicitudService;
 
     @Test
     @DisplayName("RN: No se puede asignar un técnico inactivo")
     void soloSePuedeAsignarTecnicoActivo() {
         // Arrange
         SolicitudEntity s = new SolicitudEntity(1, null, "Test");
-        Tecnico inactivo = new Tecnico(2, "Pepe", EspecialidadTecnico.SOPORTE, false);
+        TecnicoEntity inactivo = new TecnicoEntity(2, "Pepe", EspecialidadTecnico.SOPORTE, false);
         when(solicitudRepository.findById(1L)).thenReturn(Optional.of(s));
         when(tecnicoRepository.findById(2L)).thenReturn(Optional.of(inactivo));
 
