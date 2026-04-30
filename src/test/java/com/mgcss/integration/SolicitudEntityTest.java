@@ -3,10 +3,10 @@ package com.mgcss.integration;
 
 import org.junit.jupiter.api.Test;
 
-import com.mgcss.domain.Cliente;
 import com.mgcss.domain.EstadoSolicitud;
-import com.mgcss.domain.Tecnico;
+import com.mgcss.infrastructure.persistence.ClienteEntity;
 import com.mgcss.infrastructure.persistence.SolicitudEntity;
+import com.mgcss.infrastructure.persistence.TecnicoEntity;
 
 import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,14 +16,14 @@ class SolicitudEntityTest {
     @Test
     void testCoberturaCompletaDominio() {
         // 1. Preparación de datos
-        Cliente clienteInicial = new Cliente(0, null, null, null);
-        Cliente clienteNuevo = new Cliente(0, null, null, null);
-        Tecnico tecnico = new Tecnico(0, null, null, false);
+        ClienteEntity clienteInicial = new ClienteEntity(0, null, null, null);
+        ClienteEntity clienteNuevo = new ClienteEntity(0, null, null, null);
+        TecnicoEntity tecnico = new TecnicoEntity(0, null, null, false);
         LocalDate fechaCualquiera = LocalDate.of(2026, 1, 1);
         String desc = "Fallo en sistema";
 
         // 2. Test del Constructor 
-        SolicitudEntity solicitud = new SolicitudEntity(1, clienteInicial, desc);
+        SolicitudEntity solicitud = new SolicitudEntity();
 
         assertEquals(1, solicitud.getId());
         assertEquals(clienteInicial, solicitud.getCliente());
@@ -49,7 +49,7 @@ class SolicitudEntityTest {
         solicitud.setEstado(EstadoSolicitud.EN_PROCESO);
         assertEquals(EstadoSolicitud.EN_PROCESO, solicitud.getEstado());
 
-        solicitud.setTecnicoAsignado(tecnico);
+        solicitud.setTecnicoAsignado(null);
         assertEquals(tecnico, solicitud.getTecnicoAsignado());
 
         solicitud.setFechaCierre(fechaCualquiera);

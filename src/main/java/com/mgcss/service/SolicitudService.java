@@ -1,60 +1,62 @@
 package com.mgcss.service;
 
-import com.mgcss.domain.*;
-import com.mgcss.infrastructure.*;
-import com.mgcss.infrastructure.persistence.JpaSolicitudRepository;
-import com.mgcss.infrastructure.persistence.SolicitudEntity;
-
 import java.time.LocalDate;
 
-public class SolicitudService {
-    private final JpaSolicitudRepository solicitudRepository;
-    private final TecnicoRepository tecnicoRepository;
+import com.mgcss.domain.EstadoSolicitud;
+import com.mgcss.infrastructure.TecnicoRepository;
+import com.mgcss.infrastructure.persistence.JpaSolicitudRepository;
+import com.mgcss.infrastructure.persistence.JpaTecnicoRepository;
+import com.mgcss.infrastructure.persistence.SolicitudEntity;
+import com.mgcss.infrastructure.persistence.TecnicoEntity;
 
-    public SolicitudService(JpaSolicitudRepository solicitudRepository, TecnicoRepository tecnicoRepository) {
-        this.solicitudRepository = solicitudRepository;
-        this.tecnicoRepository = tecnicoRepository;
+public class SolicitudService {
+    private final JpaSolicitudRepository jpaSolicitudRepository;
+    private final JpaTecnicoRepository jpaTecnicoRepository;
+
+    public SolicitudService(JpaSolicitudRepository solicitudRepository, JpaTecnicoRepository tecnicoRepository) {
+        this.jpaSolicitudRepository = solicitudRepository;
+        this.jpaTecnicoRepository = tecnicoRepository;
     }
 
     public void asignarTecnico(Long solicitudId, Long tecnicoId) {
-        SolicitudEntity solicitud = solicitudRepository.findById(solicitudId)
+        SolicitudEntity solicitudEntity = jpaSolicitudRepository.findById(solicitudId)
                 .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
 
-        Tecnico tecnico = tecnicoRepository.findById(tecnicoId)
+        TecnicoEntity tecnicoEntity = jpaTecnicoRepository.findById(tecnicoId)
                 .orElseThrow(() -> new RuntimeException("Técnico no encontrado"));
 
-        if (!tecnico.isActivo()) {
+        if (!tecnicoEntity.isActivo()) {
             throw new IllegalArgumentException("Solo se puede asignar un técnico activo.");
         }
 
-        solicitud.setTecnicoAsignado(tecnico);
-        solicitud.setEstado(EstadoSolicitud.EN_PROCESO);
-        solicitudRepository.save(solicitud);
+        solicitudEntity.setTecnicoAsignado(tecnicoEntity);
+        solicitudEntity.setEstado(EstadoSolicitud.EN_PROCESO);
+        jpaSolicitudRepository.save(solicitudEntity);
     }
 
     public void cerrarSolicitud(Long solicitudId) {
-        SolicitudEntity solicitud = solicitudRepository.findById(solicitudId)
+        SolicitudEntity solicitudEntity = jpaSolicitudRepository.findById(solicitudId)
                 .orElseThrow(() -> new RuntimeException("No existe la solicitud"));
 
-        if (solicitud.getEstado() != EstadoSolicitud.EN_PROCESO) {
+        if (solicitudEntity.getEstado() != EstadoSolicitud.EN_PROCESO) {
             throw new IllegalStateException("Solo se puede cerrar una solicitud si está EN_PROCESO.");
         }
 
-        solicitud.setEstado(EstadoSolicitud.CERRADA);
-        solicitud.setFechaCierre(LocalDate.now());
-        solicitudRepository.save(solicitud);
+        solicitudEntity.setEstado(EstadoSolicitud.CERRADA);
+        solicitudEntity.setFechaCierre(LocalDate.now());
+        jpaSolicitudRepository.save(solicitudEntity);
     }
     
     public void cambiarEstado(Long solicitudId, EstadoSolicitud nuevoEstado) {
-        SolicitudEntity solicitud = solicitudRepository.findById(solicitudId)
+        SolicitudEntity solicitudEntity = jpaSolicitudRepository.findById(solicitudId)
                 .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
 
         // Validación de negocio: No se puede cambiar el estado de una cerrada
-        if (solicitud.getEstado() == EstadoSolicitud.CERRADA) {
+        if (solicitudEntity.getEstado() == EstadoSolicitud.CERRADA) {
             throw new IllegalStateException("No se puede cambiar el estado de una solicitud ya cerrada.");
         }
 
-        solicitud.setEstado(nuevoEstado);
-        solicitudRepository.save(solicitud);
+        solicitudEntity.setEstado(nuevoEstado);
+        jpaSolicitudRepository.save(solicitudEntity);
     }
 }

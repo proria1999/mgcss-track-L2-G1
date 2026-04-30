@@ -1,9 +1,7 @@
 package com.mgcss.infrastructure.persistence;
 
 import java.time.LocalDate;
-import com.mgcss.domain.Cliente;
 import com.mgcss.domain.EstadoSolicitud;
-import com.mgcss.domain.Tecnico;
 import jakarta.persistence.*;
 
 import lombok.Getter;
@@ -26,7 +24,7 @@ public class SolicitudEntity {
 
     @ManyToOne
     @JoinColumn(name = "cliente_id")
-    private Cliente cliente;
+    private ClienteEntity cliente;
 
     private String descripcion;
 
@@ -38,12 +36,12 @@ public class SolicitudEntity {
 
     @ManyToOne
     @JoinColumn(name = "tecnico_id")
-    private Tecnico tecnicoAsignado;
+    private TecnicoEntity tecnicoAsignado;
 
     @Column(name = "fecha_cierre")
     private LocalDate fechaCierre;
 
-    public SolicitudEntity(long id, Cliente cliente, String descripcion) {
+    public SolicitudEntity(long id, ClienteEntity cliente, String descripcion) {
         this.id = id;
         this.cliente = cliente;
         this.descripcion = descripcion;
