@@ -10,15 +10,13 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 
 @Entity
 @Table(name = "solicitudes")
-@Getter // Genera todos los getters
-@Setter // Genera todos los setters
-@NoArgsConstructor // Genera el constructor vacío (obligatorio para JPA)
-@AllArgsConstructor // Genera un constructor con todos los campos
-@Builder // Permite crear objetos con un patrón de diseño fluido
+@Getter 
+@Setter 
+@NoArgsConstructor // Necesario para JPA
+@AllArgsConstructor // Genera el de 7 parámetros
 public class SolicitudEntity {
 
     @Id
@@ -32,12 +30,10 @@ public class SolicitudEntity {
     private String descripcion;
 
     @Column(name = "fecha_creacion")
-    @Builder.Default
-    private LocalDate fechaCreacion = LocalDate.now();
+    private LocalDate fechaCreacion;
 
     @Enumerated(EnumType.STRING)
-    @Builder.Default
-    private EstadoSolicitud estado = EstadoSolicitud.ABIERTA;
+    private EstadoSolicitud estado;
 
     @ManyToOne
     @JoinColumn(name = "tecnico_id")
@@ -45,4 +41,14 @@ public class SolicitudEntity {
 
     @Column(name = "fecha_cierre")
     private LocalDate fechaCierre;
+
+    // EL CONSTRUCTOR QUE TUS TESTS RECLAMAN:
+    // Lo escribimos manualmente porque tiene lógica personalizada (LocalDate.now())
+    public SolicitudEntity(long id, Cliente cliente, String descripcion) {
+        this.id = id;
+        this.cliente = cliente;
+        this.descripcion = descripcion;
+        this.fechaCreacion = LocalDate.now();
+        this.estado = EstadoSolicitud.ABIERTA;
+    }
 }
