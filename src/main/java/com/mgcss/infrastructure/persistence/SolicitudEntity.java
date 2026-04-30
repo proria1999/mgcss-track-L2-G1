@@ -11,12 +11,13 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
-@Entity
-@Table(name = "solicitudes")
 @Getter 
 @Setter 
 @NoArgsConstructor // Necesario para JPA
 @AllArgsConstructor // Genera el de 7 parámetros
+@Entity
+@Table(name = "solicitudes")
+
 public class SolicitudEntity {
 
     @Id
@@ -42,8 +43,6 @@ public class SolicitudEntity {
     @Column(name = "fecha_cierre")
     private LocalDate fechaCierre;
 
-    // EL CONSTRUCTOR QUE TUS TESTS RECLAMAN:
-    // Lo escribimos manualmente porque tiene lógica personalizada (LocalDate.now())
     public SolicitudEntity(long id, Cliente cliente, String descripcion) {
         this.id = id;
         this.cliente = cliente;
