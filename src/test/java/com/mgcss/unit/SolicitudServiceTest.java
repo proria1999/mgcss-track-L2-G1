@@ -13,8 +13,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.mgcss.domain.EspecialidadTecnico;
 import com.mgcss.domain.EstadoSolicitud;
-import com.mgcss.domain.Tecnico;
-import com.mgcss.infrastructure.*;
 import com.mgcss.infrastructure.persistence.JpaSolicitudRepository;
 import com.mgcss.infrastructure.persistence.JpaTecnicoRepository;
 import com.mgcss.infrastructure.persistence.SolicitudEntity;
@@ -132,29 +130,5 @@ class SolicitudServiceTest {
         assertThrows(RuntimeException.class, () -> solicitudService.cerrarSolicitud(99L));
         // Cubre los bloques .orElseThrow() de las líneas 22, 39 y 52
     }
-    // FALLO MOCKITO
-    /*
-    @Test
-    void deberiaLanzarExcepcionSiTecnicoInactivo() {
-        // 1. SETUP: Preparar el escenario con un técnico inactivo
-        int tecnicoId = 1;
-        Tecnico tecnicoInactivo = new Tecnico(tecnicoId, "Juan", EspecialidadTecnico.MANTENIMIENTO, false);
-        Solicitud solicitud = new Solicitud(1, );
-
-        // Instruimos al mock para devolver el técnico inactivo
-        when(repository.findById(tecnicoId)).thenReturn(Optional.of(tecnicoInactivo));
-
-        // 2. ASSERT & ACT: Ejecutar esperando la "explosión" 
-        // Usamos assertThrows para capturar la excepción de la regla de negocio 
-        assertThrows(IllegalArgumentException.class, () -> {
-            service.asignar(solicitud, tecnicoId);
-        });
-
-        // 3. VERIFY: Garantizar la ausencia de efectos secundarios
-        // Verificamos que NUNCA se llamó al método save si hubo un error
-        verify(repository, never()).save(any());
-        
-    }
-*/
     
 }
