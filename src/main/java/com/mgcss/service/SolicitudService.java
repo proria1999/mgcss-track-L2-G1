@@ -19,8 +19,7 @@ public class SolicitudService {
     }
 
     public void asignarTecnico(Long solicitudId, Long tecnicoId) {
-        SolicitudEntity solicitudEntity = jpaSolicitudRepository.findById(solicitudId)
-                .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
+        SolicitudEntity solicitudEntity = buscarSolicitudOError(solicitudId, "Solicitud no encontrada");
 
         TecnicoEntity tecnicoEntity = jpaTecnicoRepository.findById(tecnicoId)
                 .orElseThrow(() -> new RuntimeException("Técnico no encontrado"));
@@ -34,9 +33,14 @@ public class SolicitudService {
         jpaSolicitudRepository.save(solicitudEntity);
     }
 
+    // Extract Method
+	private SolicitudEntity buscarSolicitudOError(Long solicitudId, String excepcion) {
+		return jpaSolicitudRepository.findById(solicitudId)
+                .orElseThrow(() -> new RuntimeException(excepcion));
+	}
+
     public void cerrarSolicitud(Long solicitudId) {
-        SolicitudEntity solicitudEntity = jpaSolicitudRepository.findById(solicitudId)
-                .orElseThrow(() -> new RuntimeException("No existe la solicitud"));
+        SolicitudEntity solicitudEntity = buscarSolicitudOError(solicitudId, "No existe la solicitud");
 
         if (solicitudEntity.getEstado() != EstadoSolicitud.EN_PROCESO) {
             throw new IllegalStateException("Solo se puede cerrar una solicitud si está EN_PROCESO.");
@@ -48,8 +52,7 @@ public class SolicitudService {
     }
     
     public void cambiarEstado(Long solicitudId, EstadoSolicitud nuevoEstado) {
-        SolicitudEntity solicitudEntity = jpaSolicitudRepository.findById(solicitudId)
-                .orElseThrow(() -> new RuntimeException("Solicitud no encontrada"));
+        SolicitudEntity solicitudEntity = buscarSolicitudOError(solicitudId, "Solicitud no encontrada");
 
         // Validación de negocio: No se puede cambiar el estado de una cerrada
         if (solicitudEntity.getEstado() == EstadoSolicitud.CERRADA) {
