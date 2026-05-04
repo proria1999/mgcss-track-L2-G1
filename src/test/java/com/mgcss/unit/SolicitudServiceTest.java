@@ -3,6 +3,7 @@ package com.mgcss.unit;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
@@ -129,6 +130,44 @@ class SolicitudServiceTest {
 
         assertThrows(RuntimeException.class, () -> solicitudService.cerrarSolicitud(99L));
         // Cubre los bloques .orElseThrow() de las líneas 22, 39 y 52
+    }
+
+    @Test
+    @DisplayName("Reabrir solicitud cerrada cambia estado a EN_PROCESO")
+    void reabrirSolicitudExito() {
+        SolicitudEntity s = new SolicitudEntity(1, null, "Test Reabrir");
+        s.setEstado(EstadoSolicitud.CERRADA);
+        when(solicitudRepository.findById(1L)).thenReturn(Optional.of(s));
+
+        // Act
+        solicitudService.reabrirSolicitud(1L);
+
+        // Assert
+        assertEquals(EstadoSolicitud.EN_PROCESO, s.getEstado());
+        verify(solicitudRepository, times(1)).save(s);
+    }
+
+    @Test
+    @DisplayName("El historial registra los cambios en orden")
+    void verificarHistorialEstados() {
+        SolicitudEntity s = new SolicitudEntity(1, null, "Test Historial");
+        
+        when(solicitudRepository.findById(1L)).thenReturn(Optional.of(s));
+
+        // Act: Realizamos varios cambios
+        solicitudService.cambiarEstado(1L, EstadoSolicitud.EN_PROCESO);
+        solicitudService.cerrarSolicitud(1L);
+        solicitudService.reabrirSolicitud(1L);
+
+        // Assert: Ahora verificamos los 4 estados
+        List<EstadoSolicitud> historial = s.getHistorialEstados();
+        assertEquals(4, historial.size(), "El historial debe tener 4 estados");
+        
+        // Verificamos el orden cronológico exacto
+        assertEquals(EstadoSolicitud.ABIERTA, historial.get(0));
+        assertEquals(EstadoSolicitud.EN_PROCESO, historial.get(1));
+        assertEquals(EstadoSolicitud.CERRADA, historial.get(2));
+        assertEquals(EstadoSolicitud.EN_PROCESO, historial.get(3));
     }
     
 }

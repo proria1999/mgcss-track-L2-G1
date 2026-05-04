@@ -3,7 +3,6 @@ package com.mgcss.service;
 import java.time.LocalDate;
 
 import com.mgcss.domain.EstadoSolicitud;
-import com.mgcss.infrastructure.TecnicoRepository;
 import com.mgcss.infrastructure.persistence.JpaSolicitudRepository;
 import com.mgcss.infrastructure.persistence.JpaTecnicoRepository;
 import com.mgcss.infrastructure.persistence.SolicitudEntity;
@@ -29,7 +28,7 @@ public class SolicitudService {
         }
 
         solicitudEntity.setTecnicoAsignado(tecnicoEntity);
-        solicitudEntity.setEstado(EstadoSolicitud.EN_PROCESO);
+        solicitudEntity.registrarCambioEstado(EstadoSolicitud.EN_PROCESO);
         jpaSolicitudRepository.save(solicitudEntity);
     }
 
@@ -38,18 +37,6 @@ public class SolicitudService {
 		return jpaSolicitudRepository.findById(solicitudId)
                 .orElseThrow(() -> new RuntimeException(excepcion));
 	}
-
-    public void cerrarSolicitud(Long solicitudId) {
-        SolicitudEntity solicitudEntity = buscarSolicitudOError(solicitudId, "No existe la solicitud");
-
-        if (solicitudEntity.getEstado() != EstadoSolicitud.EN_PROCESO) {
-            throw new IllegalStateException("Solo se puede cerrar una solicitud si está EN_PROCESO.");
-        }
-
-        solicitudEntity.setEstado(EstadoSolicitud.CERRADA);
-        solicitudEntity.setFechaCierre(LocalDate.now());
-        jpaSolicitudRepository.save(solicitudEntity);
-    }
     
     public void cambiarEstado(Long solicitudId, EstadoSolicitud nuevoEstado) {
         SolicitudEntity solicitudEntity = buscarSolicitudOError(solicitudId, "Solicitud no encontrada");
@@ -59,7 +46,32 @@ public class SolicitudService {
             throw new IllegalStateException("No se puede cambiar el estado de una solicitud ya cerrada.");
         }
 
-        solicitudEntity.setEstado(nuevoEstado);
+        solicitudEntity.registrarCambioEstado(nuevoEstado);
+        jpaSolicitudRepository.save(solicitudEntity);
+    }
+    
+    public void reabrirSolicitud(Long solicitudId) {
+        SolicitudEntity solicitudEntity = buscarSolicitudOError(solicitudId, "Solicitud no encontrada");
+
+        // REGLA: Solo se puede reabrir si está CERRADA
+        if (solicitudEntity.getEstado() != EstadoSolicitud.CERRADA) {
+            throw new IllegalStateException("Solo se puede reabrir una solicitud CERRADA.");
+        }
+
+        // Cambio de estado y registro en histórico
+        solicitudEntity.registrarCambioEstado(EstadoSolicitud.EN_PROCESO);
+        jpaSolicitudRepository.save(solicitudEntity);
+    }
+
+    public void cerrarSolicitud(Long solicitudId) {
+        SolicitudEntity solicitudEntity = buscarSolicitudOError(solicitudId, "No existe la solicitud");
+        
+        if (solicitudEntity.getEstado() != EstadoSolicitud.EN_PROCESO) {
+            throw new IllegalStateException("Solo se puede cerrar si está EN_PROCESO.");
+        }
+
+        solicitudEntity.registrarCambioEstado(EstadoSolicitud.CERRADA);
+        solicitudEntity.setFechaCierre(LocalDate.now());
         jpaSolicitudRepository.save(solicitudEntity);
     }
 }
