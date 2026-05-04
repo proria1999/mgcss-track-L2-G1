@@ -1,6 +1,9 @@
 package com.mgcss.infrastructure.persistence;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.mgcss.domain.EstadoSolicitud;
 import jakarta.persistence.*;
 
@@ -40,12 +43,20 @@ public class SolicitudEntity {
 
     @Column(name = "fecha_cierre")
     private LocalDate fechaCierre;
+    
+    @ElementCollection 
+    private List<EstadoSolicitud> historialEstados = new ArrayList<>();
 
     public SolicitudEntity(long id, ClienteEntity cliente, String descripcion) {
         this.id = id;
         this.cliente = cliente;
         this.descripcion = descripcion;
         this.fechaCreacion = LocalDate.now();
-        this.estado = EstadoSolicitud.ABIERTA;
+        registrarCambioEstado(EstadoSolicitud.ABIERTA);
+    }
+    
+    public void registrarCambioEstado(EstadoSolicitud nuevoEstado) {
+        this.historialEstados.add(nuevoEstado);
+        this.estado = nuevoEstado;
     }
 }
