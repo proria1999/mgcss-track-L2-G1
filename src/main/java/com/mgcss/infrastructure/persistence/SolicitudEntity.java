@@ -44,7 +44,10 @@ public class SolicitudEntity {
     @Column(name = "fecha_cierre")
     private LocalDate fechaCierre;
     
-    @ElementCollection 
+    @ElementCollection(fetch = FetchType.EAGER) // Eager para facilitar la verificación en tests
+    @CollectionTable(name = "solicitud_historial_estados", joinColumns = @JoinColumn(name = "solicitud_id"))
+    @Column(name = "estado")
+    @Enumerated(EnumType.STRING) 
     private List<EstadoSolicitud> historialEstados = new ArrayList<>();
 
     public SolicitudEntity(long id, ClienteEntity cliente, String descripcion) {
