@@ -14,6 +14,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.mgcss.domain.EspecialidadTecnico;
 import com.mgcss.domain.EstadoSolicitud;
+import com.mgcss.infrastructure.persistence.ClienteEntity;
+import com.mgcss.infrastructure.persistence.JpaClienteRepository;
 import com.mgcss.infrastructure.persistence.JpaSolicitudRepository;
 import com.mgcss.infrastructure.persistence.JpaTecnicoRepository;
 import com.mgcss.infrastructure.persistence.SolicitudEntity;
@@ -29,6 +31,8 @@ class SolicitudServiceTest {
     private JpaTecnicoRepository tecnicoRepository;
     @InjectMocks 
     private SolicitudService solicitudService;
+    @Mock 
+    private JpaClienteRepository clienteRepository;
 
     @Test
     @DisplayName("RN: No se puede asignar un técnico inactivo")
@@ -170,4 +174,53 @@ class SolicitudServiceTest {
         assertEquals(EstadoSolicitud.EN_PROCESO, historial.get(3));
     }
     
+    @Test
+    @DisplayName("EXITO: Listar todas devuelve una lista de solicitudes")
+    void listarTodasExito() {
+        // Arrange
+        List<SolicitudEntity> listaMock = List.of(
+            new SolicitudEntity(1L, null, "Error 1"),
+            new SolicitudEntity(2L, null, "Error 2")
+        );
+        when(solicitudRepository.findAll()).thenReturn(listaMock);
+
+        // Act
+        List<SolicitudEntity> resultado = solicitudService.listarTodas();
+
+        // Assert
+        assertEquals(2, resultado.size());
+        verify(solicitudRepository, times(1)).findAll();
+    }
+    
+    @Test
+    @DisplayName("EXITO: Crear solicitud correctamente busca al cliente y la guarda")
+    void crearSolicitudExito() {
+        Long clienteId = 1L;
+        String descripcion = "Incidencia de conectividad en oficina";
+        ClienteEntity cliente = new ClienteEntity(clienteId, "Cliente S.A.", "cliente@test.com", null);
+        SolicitudEntity solicitudEsperada = new SolicitudEntity(100L, cliente, descripcion);
+
+        when(clienteRepository.findById(clienteId)).thenReturn(Optional.of(cliente));
+        when(solicitudRepository.save(any(SolicitudEntity.class))).thenReturn(solicitudEsperada);
+
+        SolicitudEntity resultado = solicitudService.crearSolicitud(clienteId, descripcion);
+
+        assertNotNull(resultado);
+        assertEquals(100L, resultado.getId());
+        assertEquals("Cliente S.A.", resultado.getCliente().getNombre());
+        assertEquals(descripcion, resultado.getDescripcion());
+        verify(solicitudRepository, times(1)).save(any(SolicitudEntity.class));
+    }
+
+    @Test
+    @DisplayName("ERROR: Crear solicitud lanza excepción si el cliente no existe")
+    void crearSolicitudClienteNoEncontrado() {
+        Long clienteId = 99L;
+        when(clienteRepository.findById(clienteId)).thenReturn(Optional.empty());
+
+        assertThrows(RuntimeException.class, () -> 
+            solicitudService.crearSolicitud(clienteId, "Fallo en el sistema de red")
+        );
+        verify(solicitudRepository, never()).save(any(SolicitudEntity.class));
+    }
 }
