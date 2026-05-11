@@ -1,20 +1,28 @@
 package com.mgcss.service;
 
 import java.time.LocalDate;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
 
 import com.mgcss.domain.EstadoSolicitud;
+import com.mgcss.infrastructure.persistence.ClienteEntity;
+import com.mgcss.infrastructure.persistence.JpaClienteRepository;
 import com.mgcss.infrastructure.persistence.JpaSolicitudRepository;
 import com.mgcss.infrastructure.persistence.JpaTecnicoRepository;
 import com.mgcss.infrastructure.persistence.SolicitudEntity;
 import com.mgcss.infrastructure.persistence.TecnicoEntity;
 
+@Service
 public class SolicitudService {
     private final JpaSolicitudRepository jpaSolicitudRepository;
     private final JpaTecnicoRepository jpaTecnicoRepository;
+    private final JpaClienteRepository jpaClienteRepository;
 
-    public SolicitudService(JpaSolicitudRepository solicitudRepository, JpaTecnicoRepository tecnicoRepository) {
+    public SolicitudService(JpaSolicitudRepository solicitudRepository, JpaTecnicoRepository tecnicoRepository, JpaClienteRepository jpaClienteRepository) {
         this.jpaSolicitudRepository = solicitudRepository;
         this.jpaTecnicoRepository = tecnicoRepository;
+        this.jpaClienteRepository = jpaClienteRepository;
     }
 
     public void asignarTecnico(Long solicitudId, Long tecnicoId) {
@@ -33,7 +41,7 @@ public class SolicitudService {
     }
 
     // Extract Method
-	private SolicitudEntity buscarSolicitudOError(Long solicitudId, String excepcion) {
+	public SolicitudEntity buscarSolicitudOError(Long solicitudId, String excepcion) {
 		return jpaSolicitudRepository.findById(solicitudId)
                 .orElseThrow(() -> new RuntimeException(excepcion));
 	}
@@ -74,4 +82,16 @@ public class SolicitudService {
         solicitudEntity.setFechaCierre(LocalDate.now());
         jpaSolicitudRepository.save(solicitudEntity);
     }
+   //Obtiene el listado completo de solicitudes.
+   public List<SolicitudEntity> listarTodas() {
+       return jpaSolicitudRepository.findAll();
+   }
+
+   public SolicitudEntity crearSolicitud(Long clienteId, String descripcion) {
+	    ClienteEntity cliente = jpaClienteRepository.findById(clienteId)
+	            .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+
+	    SolicitudEntity solicitud = new SolicitudEntity(0, cliente, descripcion);
+	    return jpaSolicitudRepository.save(solicitud);
+	}
 }
