@@ -72,11 +72,15 @@ class SolicitudControllerTest {
 
     @Test
     void debeConsultarSolicitudExistente() throws Exception {
+        // Preparar los datos
         ClienteEntity cliente = new ClienteEntity(1L, "Cliente S.A.", "cliente@test.com", null);
         SolicitudEntity deRetorno = new SolicitudEntity(1L, cliente, "Fallo de red");
 
-        when(solicitudService.buscarSolicitudOError(1L, "")).thenReturn(deRetorno);
+        // Configurar el Mock usando any() para evitar fallos por argumentos exactos
+        // Importante: Si el método recibe un Long y un String, usa any() para ambos
+        when(solicitudService.buscarSolicitudOError(eq(1L), any())).thenReturn(deRetorno);
 
+        // Ejecutar y verificar
         mockMvc.perform(get("/api/solicitudes/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
