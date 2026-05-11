@@ -44,7 +44,7 @@ public class SolicitudController {
     public ResponseEntity<List<SolicitudResponseDTO>> listar() {
         List<SolicitudResponseDTO> dtos = solicitudService.listarTodas().stream()
                 .map(this::toDTO)
-                .collect(Collectors.toList());
+                .toList();
         return ResponseEntity.ok(dtos);
     }
 

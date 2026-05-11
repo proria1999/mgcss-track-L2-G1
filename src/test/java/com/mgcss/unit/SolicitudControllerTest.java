@@ -2,6 +2,7 @@ package com.mgcss.unit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mgcss.controller.SolicitudController;
+import com.mgcss.domain.EstadoSolicitud;
 import com.mgcss.dto.SolicitudRequestDTO;
 import com.mgcss.infrastructure.persistence.ClienteEntity;
 import com.mgcss.infrastructure.persistence.SolicitudEntity;
@@ -16,9 +17,12 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.util.List;
 
 @Import(ObjectMapper.class)
 @WebMvcTest(SolicitudController.class)
@@ -58,11 +62,63 @@ class SolicitudControllerTest {
     void debeRetornar400CuandoLaDescripcionEsCorta() throws Exception {
         SolicitudRequestDTO request = new SolicitudRequestDTO();
         request.setClienteId(1L);
-        request.setDescripcion("Corta"); // Menor a 10 caracteres
+        request.setDescripcion("Corta");
 
         mockMvc.perform(post("/api/solicitudes")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void debeConsultarSolicitudExistente() throws Exception {
+        ClienteEntity cliente = new ClienteEntity(1L, "Cliente S.A.", "cliente@test.com", null);
+        SolicitudEntity deRetorno = new SolicitudEntity(1L, cliente, "Fallo de red");
+
+        when(solicitudService.buscarSolicitudOError(1L, "")).thenReturn(deRetorno);
+
+        mockMvc.perform(get("/api/solicitudes/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.descripcion").value("Fallo de red"))
+                .andExpect(jsonPath("$.clienteNombre").value("Cliente S.A."));
+    }
+
+    @Test
+    void debeListarSolicitudes() throws Exception {
+        ClienteEntity cliente = new ClienteEntity(1L, "Cliente S.A.", "cliente@test.com", null);
+        SolicitudEntity solicitud = new SolicitudEntity(1L, cliente, "Fallo de red");
+
+        when(solicitudService.listarTodas()).thenReturn(List.of(solicitud));
+
+        mockMvc.perform(get("/api/solicitudes"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(1))
+                .andExpect(jsonPath("$[0].descripcion").value("Fallo de red"));
+    }
+
+    @Test
+    void debeAsignarTecnico() throws Exception {
+        doNothing().when(solicitudService).asignarTecnico(1L, 2L);
+
+        mockMvc.perform(put("/api/solicitudes/1/tecnico/2"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void debeCambiarEstado() throws Exception {
+        doNothing().when(solicitudService).cambiarEstado(1L, EstadoSolicitud.EN_PROCESO);
+
+        mockMvc.perform(put("/api/solicitudes/1/estado")
+                        .param("estado", "EN_PROCESO"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void debeReabrirSolicitud() throws Exception {
+        doNothing().when(solicitudService).reabrirSolicitud(1L);
+
+        mockMvc.perform(patch("/api/solicitudes/1/reabrir"))
+                .andExpect(status().isOk());
     }
 }
