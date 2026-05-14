@@ -38,8 +38,9 @@ class ClienteControllerTest {
 
     @Test
     void debeConsultarClienteExistente() throws Exception {
-        ClienteEntity deRetorno = new ClienteEntity(1L, "Cliente S.A.", "cliente@test.com", TipoCliente.PREMIUM); //
+        ClienteEntity deRetorno = new ClienteEntity(1L, "Cliente S.A.", "cliente@test.com", TipoCliente.PREMIUM);
 
+        // Configuración con comodines para evitar discrepancias de tipos (Long vs long, o el String del mensaje)
         when(clienteService.buscarClienteOError(any(), any())).thenReturn(deRetorno);
 
         mockMvc.perform(get("/api/clientes/1"))
@@ -48,7 +49,6 @@ class ClienteControllerTest {
                 .andExpect(jsonPath("$.nombre").value("Cliente S.A."))
                 .andExpect(jsonPath("$.email").value("cliente@test.com"));
     }
-
     @Test
     void debeListarClientes() throws Exception {
         ClienteEntity cliente = new ClienteEntity(1L, "Cliente S.A.", "cliente@test.com", TipoCliente.STANDARD); //
