@@ -53,9 +53,6 @@ public class ClienteController {
         ClienteResponseDTO dto = new ClienteResponseDTO();
         dto.setId(entity.getId());
         dto.setNombre(entity.getNombre());
-        // Asumiendo que ClienteEntity tiene el campo email como el DTO
-        // Si no existe en la entidad, podrías omitirlo o añadirlo a la persistencia
-        // dto.setEmail(entity.getEmail()); 
         return dto;
     }
 }

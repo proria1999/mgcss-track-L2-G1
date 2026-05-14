@@ -3,6 +3,7 @@ package com.mgcss.unit;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mgcss.controller.ClienteController;
 import com.mgcss.domain.TipoCliente; //
+import com.mgcss.dto.ClienteRequestDTO;
 import com.mgcss.infrastructure.persistence.ClienteEntity; //
 import com.mgcss.service.ClienteService;
 
@@ -20,6 +21,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.mockito.ArgumentMatchers.anyString;
 
 
 import java.util.List;
@@ -60,5 +62,20 @@ class ClienteControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(1))
                 .andExpect(jsonPath("$[0].nombre").value("Cliente S.A."));
+    }
+    
+    @Test
+    void debeCrearClienteExitosamente() throws Exception {
+        ClienteRequestDTO request = new ClienteRequestDTO("Juan Perez", "juan@mail.com");
+        ClienteEntity entidadCreada = new ClienteEntity(1L, "Juan Perez", "juan@mail.com", TipoCliente.STANDARD);
+
+        when(clienteService.crearCliente(eq("Juan Perez"), anyString())).thenReturn(entidadCreada);
+
+        mockMvc.perform(post("/api/clientes")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.nombre").value("Juan Perez"));
     }
 }
