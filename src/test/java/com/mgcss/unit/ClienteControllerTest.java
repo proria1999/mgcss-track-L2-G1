@@ -20,6 +20,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+
 import java.util.List;
 
 @Import(ObjectMapper.class)
@@ -39,7 +40,7 @@ class ClienteControllerTest {
     void debeConsultarClienteExistente() throws Exception {
         ClienteEntity deRetorno = new ClienteEntity(1L, "Cliente S.A.", "cliente@test.com", TipoCliente.PREMIUM); //
 
-        when(clienteService.buscarClienteOError(eq(1L), any())).thenReturn(deRetorno);
+        when(clienteService.buscarClienteOError(any(), any())).thenReturn(deRetorno);
 
         mockMvc.perform(get("/api/clientes/1"))
                 .andExpect(status().isOk())
