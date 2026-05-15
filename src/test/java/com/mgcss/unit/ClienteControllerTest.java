@@ -1,0 +1,81 @@
+package com.mgcss.unit;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mgcss.controller.ClienteController;
+import com.mgcss.domain.TipoCliente; //
+import com.mgcss.dto.ClienteRequestDTO;
+import com.mgcss.infrastructure.persistence.ClienteEntity; //
+import com.mgcss.service.ClienteService;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.mockito.ArgumentMatchers.anyString;
+
+
+import java.util.List;
+
+@Import(ObjectMapper.class)
+@WebMvcTest(ClienteController.class)
+class ClienteControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockitoBean
+    private ClienteService clienteService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Test
+    void debeConsultarClienteExistente() throws Exception {
+        ClienteEntity deRetorno = new ClienteEntity(1L, "Cliente S.A.", "cliente@test.com", TipoCliente.PREMIUM);
+
+        // CAMBIO: Mockea el método que el controlador llama directamente
+        when(clienteService.obtenerPorId(anyLong())).thenReturn(deRetorno);
+
+        mockMvc.perform(get("/api/clientes/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.nombre").value("Cliente S.A."));
+                // Nota: El email solo funcionará si lo mapeas en toDTO dentro del Controller
+    }
+    @Test
+    void debeListarClientes() throws Exception {
+        ClienteEntity cliente = new ClienteEntity(1L, "Cliente S.A.", "cliente@test.com", TipoCliente.STANDARD); //
+
+        when(clienteService.listarTodos()).thenReturn(List.of(cliente));
+
+        mockMvc.perform(get("/api/clientes"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(1))
+                .andExpect(jsonPath("$[0].nombre").value("Cliente S.A."));
+    }
+    
+    @Test
+    void debeCrearClienteExitosamente() throws Exception {
+        ClienteRequestDTO request = new ClienteRequestDTO("Juan Perez", "juan@mail.com");
+        ClienteEntity entidadCreada = new ClienteEntity(1L, "Juan Perez", "juan@mail.com", TipoCliente.STANDARD);
+
+        when(clienteService.crearCliente(eq("Juan Perez"), anyString())).thenReturn(entidadCreada);
+
+        mockMvc.perform(post("/api/clientes")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.nombre").value("Juan Perez"));
+    }
+}
