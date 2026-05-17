@@ -15,21 +15,12 @@ import lombok.Setter;
 @Schema(description = "DTO de respuesta de cliente")
 public class ClienteResponseDTO {
 
-    @Schema(
-        description = "Identificador único del cliente",
-        example = "1"
-    )
+    @Schema(description = "Identificador único del cliente",example = "1")
     private Long id;
-
-    @Schema(
-        description = "Nombre del cliente",
-        example = "Juan Pérez"
-    )
+    
+    @Schema(description = "Nombre del cliente",example = "Juan Pérez")
     private String nombre;
-
-    @Schema(
-        description = "Correo electrónico",
-        example = "juan@email.com"
-    )
+    
+    @Schema(description = "Correo electrónico",example = "juan@email.com")
     private String email;
 }

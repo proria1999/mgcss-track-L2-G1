@@ -18,17 +18,11 @@ import lombok.Setter;
 public class ClienteRequestDTO {
 
     @NotBlank
-    @Schema(
-        description = "Nombre completo del cliente",
-        example = "Juan Pérez"
-    )
+    @Schema(description = "Nombre completo del cliente",example = "Juan Pérez")
     private String nombre;
 
     @Email
     @NotBlank
-    @Schema(
-        description = "Correo electrónico del cliente",
-        example = "juan@email.com"
-    )
+    @Schema(description = "Correo electrónico del cliente",example = "juan@email.com")
     private String email;
 }
