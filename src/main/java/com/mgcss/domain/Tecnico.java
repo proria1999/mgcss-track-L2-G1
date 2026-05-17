@@ -1,5 +1,9 @@
 package com.mgcss.domain;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class Tecnico {
 
 	private long id;
@@ -13,38 +17,5 @@ public class Tecnico {
 		this.especialidad = especialidad;
 		this.activo = activo;
 	}
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getNombre() {
-		return nombre;
-	}
-
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
-
-	public EspecialidadTecnico getEspecialidad() {
-		return especialidad;
-	}
-
-	public void setEspecialidad(EspecialidadTecnico especialidad) {
-		this.especialidad = especialidad;
-	}
-
-	public boolean isActivo() {
-		return activo;
-	}
-
-	public void setActivo(boolean activo) {
-		this.activo = activo;
-	}
-	
 
 }
