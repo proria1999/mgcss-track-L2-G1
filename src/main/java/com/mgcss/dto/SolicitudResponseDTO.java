@@ -1,13 +1,18 @@
 package com.mgcss.dto;
 
+import com.mgcss.domain.EspecialidadTecnico;
 import com.mgcss.domain.EstadoSolicitud;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.time.LocalDate;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Schema(description = "Contrato de salida de una solicitud procesada")
 public class SolicitudResponseDTO {
 

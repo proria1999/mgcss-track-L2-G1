@@ -1,7 +1,17 @@
 package com.mgcss.dto;
 
-import io.swagger.v3.oas.annotations.media.Schema;
+import com.mgcss.domain.EspecialidadTecnico;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Schema(description = "DTO de respuesta de cliente")
 public class ClienteResponseDTO {
 
@@ -22,38 +32,4 @@ public class ClienteResponseDTO {
         example = "juan@email.com"
     )
     private String email;
-
-
-    public ClienteResponseDTO() {
-    }
-
-    public ClienteResponseDTO(Long id, String nombre, String email) {
-        this.id = id;
-        this.nombre = nombre;
-        this.email = email;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
 }
