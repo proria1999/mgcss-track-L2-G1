@@ -5,6 +5,7 @@ import com.mgcss.dto.ClienteResponseDTO;
 import com.mgcss.infrastructure.persistence.ClienteEntity;
 import com.mgcss.service.ClienteService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,8 @@ public class ClienteController {
 
     @PostMapping
     @Operation(summary = "Crear cliente", description = "Registra un nuevo cliente en el sistema")
+    @ApiResponse(responseCode = "200", description = "Cliente creado con éxito")
+    @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos o formato de email incorrecto")
     public ResponseEntity<ClienteResponseDTO> crear(@Valid @RequestBody ClienteRequestDTO request) {
         // Nota: Tu ClienteService actual solo recibe nombre y tipo. 
         // He usado el nombre del DTO. El tipo se asigna como STANDARD internamente en el servicio.
@@ -34,6 +37,8 @@ public class ClienteController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Consultar cliente", description = "Recupera la información de un cliente por su ID")
+    @ApiResponse(responseCode = "200", description = "Cliente encontrado correctamente")
+    @ApiResponse(responseCode = "404", description = "Cliente no encontrado")
     public ResponseEntity<ClienteResponseDTO> consultar(@PathVariable Long id) {
         ClienteEntity cliente = clienteService.obtenerPorId(id);
         return ResponseEntity.ok(toDTO(cliente));
@@ -41,6 +46,7 @@ public class ClienteController {
 
     @GetMapping
     @Operation(summary = "Listar clientes", description = "Obtiene el listado completo de clientes registrados")
+    @ApiResponse(responseCode = "200", description = "Lista de clientes obtenida correctamente")
     public ResponseEntity<List<ClienteResponseDTO>> listar() {
         List<ClienteResponseDTO> dtos = clienteService.listarTodos().stream()
                 .map(this::toDTO)

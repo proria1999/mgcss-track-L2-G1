@@ -5,8 +5,6 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 
-import com.mgcss.infrastructure.persistence.ClienteEntity;
-
 @Getter
 @Setter
 
