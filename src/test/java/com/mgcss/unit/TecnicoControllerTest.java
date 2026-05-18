@@ -3,6 +3,7 @@ package com.mgcss.unit;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mgcss.controller.TecnicoController;
 import com.mgcss.domain.EspecialidadTecnico;
+import com.mgcss.dto.TecnicoRequestDTO;
 import com.mgcss.infrastructure.persistence.TecnicoEntity;
 import com.mgcss.service.TecnicoService;
 
@@ -15,6 +16,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -58,4 +60,40 @@ class TecnicoControllerTest {
                 .andExpect(jsonPath("$[0].id").value(1))
                 .andExpect(jsonPath("$[0].nombre").value("Juan"));
     }
+    
+    @Test
+    void debeCrearTecnicoYRetornar200() throws Exception {
+        TecnicoRequestDTO request = new TecnicoRequestDTO();
+        request.setNombre("Pedro");
+        request.setEspecialidad(EspecialidadTecnico.SOPORTE);
+
+        TecnicoEntity deRetorno = new TecnicoEntity(1L, "Pedro", EspecialidadTecnico.MANTENIMIENTO, false);
+
+        when(tecnicoService.crearTecnico(eq("Pedro"), any())).thenReturn(deRetorno);
+
+        mockMvc.perform(post("/api/tecnicos")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.nombre").value("Pedro"))
+                .andExpect(jsonPath("$.especialidad").value("MANTENIMIENTO"));
+    }
+
+    @Test
+    void debeRetornar400CuandoElNombreEstaVacio() throws Exception {
+        TecnicoRequestDTO request = new TecnicoRequestDTO();
+        request.setNombre("");
+        request.setEspecialidad(EspecialidadTecnico.SOPORTE);
+
+        // Si el servicio lanza IllegalArgumentException, simulamos el error de validación
+        when(tecnicoService.crearTecnico(eq(""), any())).thenThrow(new IllegalArgumentException());
+
+        mockMvc.perform(post("/api/tecnicos")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
+    }
+    
+    
 }
