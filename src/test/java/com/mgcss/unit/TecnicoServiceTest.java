@@ -1,7 +1,10 @@
 package com.mgcss.unit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -15,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.mgcss.domain.EspecialidadTecnico;
+import com.mgcss.dto.TecnicoRequestDTO;
 import com.mgcss.infrastructure.persistence.TecnicoEntity;
 import com.mgcss.service.TecnicoService;
 import com.mgcss.infrastructure.persistence.JpaTecnicoRepository;
@@ -46,5 +50,32 @@ class TecnicoServiceTest {
 
         assertEquals(1, resultado.size());
         verify(tecnicoRepository, times(1)).findAll();
+    }
+    
+    @Test
+    void crearTecnicoExito() {
+        String nombre = "Pedro";
+        EspecialidadTecnico esp = EspecialidadTecnico.SOPORTE;
+        TecnicoEntity tecnicoEsperado = new TecnicoEntity(1L, nombre, EspecialidadTecnico.MANTENIMIENTO, false);
+
+        when(tecnicoRepository.save(any(TecnicoEntity.class))).thenReturn(tecnicoEsperado);
+
+        TecnicoEntity resultado = tecnicoService.crearTecnico(nombre, esp);
+
+        assertNotNull(resultado);
+        assertEquals(nombre, resultado.getNombre());
+        assertEquals(EspecialidadTecnico.MANTENIMIENTO, resultado.getEspecialidad());
+        verify(tecnicoRepository, times(1)).save(any(TecnicoEntity.class));
+    }
+
+    @Test
+    void crearTecnicoNombreVacio() {
+        assertThrows(IllegalArgumentException.class, () -> 
+            tecnicoService.crearTecnico("", EspecialidadTecnico.SOPORTE)
+        );
+        assertThrows(IllegalArgumentException.class, () -> 
+            tecnicoService.crearTecnico(null, EspecialidadTecnico.SOPORTE)
+        );
+        verify(tecnicoRepository, never()).save(any(TecnicoEntity.class));
     }
 }
