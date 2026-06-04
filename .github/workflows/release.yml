@@ -19,7 +19,7 @@ jobs:
 
       # 2. Configurar el entorno de Java
       - name: Configurar JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@61081a333c893d6930a36d90a54053fa2c4ed374 # v4.2.1
         with:
           java-version: '17'
           distribution: 'temurin'
@@ -44,7 +44,7 @@ jobs:
 
       # FASE 3: Publicar la Release automáticamente en GitHub y adjuntar el .jar
       - name: Publicar Release en GitHub
-        uses: softprops/action-gh-release@7930ab8db36867eb254ced5b3e42e345d011432e # v2
+        uses: softprops/action-gh-release@c95fe1489396fe8a218714604add9b06f1e6129a # v2.0.4
         with:
           files: target/*.jar # Adjunta el .jar generado como asset de la release
           generate_release_notes: true # Autogenera el apartado de notas basándose en commits
