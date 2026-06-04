@@ -25,6 +25,10 @@ jobs:
           java-version: 17
           cache: maven
 
+          # NUEVO PASO: Otorgar permisos de ejecución al wrapper de Maven
+      - name: Dar permisos de ejecucion a mvnw
+        run: chmod +x mvnw
+
       # FASE 5: Control de calidad (Obligatorio)
       - name: Ejecutar Tests y Análisis de SonarCloud
         env:
