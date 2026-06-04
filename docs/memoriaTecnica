@@ -1,0 +1,66 @@
+1. Decisiones Arquitectónicas 
+  1.1 Patrón Arquitectónico: Hexagonal + Capas 
+    Se implementó una arquitectura hexagonal organizada en 4 capas concéntricas: 
+    Capa 
+    Responsabilidad 
+    DOMINIO 
+    Contiene entidades (Solicitud, Cliente, Técnico) y reglas de negocio puras, sin dependencias de infraestructura 
+    SERVICIOS 
+    Orquesta casos de uso, delega lógica al dominio y maneja transacciones 
+    INFRAESTRUCTURA 
+    Implementa persistencia con JPA/Hibernate y H2 
+    API REST 
+    Expone controladores con DTOs separados para proteger el dominio 
+  1.2 Justificación de la Arquitectura 
+    Esta arquitectura permite que el dominio sea testeable sin base de datos, facilitando cambios sin 
+    regresiones. La inversión inicial se amortiza cuando llegan nuevos requisitos, como se demostró al implementar reapertura de solicitudes e histórico de cambios. 
+  1.3 Decisiones Específicas 
+    1. Dominio y Persistencia Unificados 
+    Se utilizó la misma clase para entidad de dominio y persistencia (con anotaciones JPA). Aunque 
+    introduce acoplamiento, en proyectos de este tamaño evita duplicación innecesaria. 
+    2. DTOs Separados 
+    Los DTOs (RequestDTO, ResponseDTO)  protegen el dominio de cambios en el contrato REST. 
+    3. Métodos de Intención 
+    En lugar de setters públicos, la entidad Solicitud expone métodos semánticos: asignarTecnico(), cerrar(), reabrir(). Estos validan reglas de negocio internamente. 
+    4. Lombok para Reducir Boilerplate Anotaciones @Data, @NoArgsConstructor, @AllArgsConstructor generan automáticamente getters, setters, constructores. 
+  1.4 Evolución del Sistema 
+    Durante el desarrollo se introdujo un requisito adicional: permitir reapertura de solicitudes 
+    cerradas y mantener histórico de cambios. La arquitectura permitió implementarlo con TDD (Red-Green-Refactor) sin romper funcionalidad existente. 
+2. Instrucciones de Instalación 
+  2.1 Requisitos Previos 
+    ● Java 17 o superior 
+    ● Maven 3.6 o superior 
+    ● Git 
+  2.2 Pasos de Instalación 
+    Paso 1: Clonar el Repositorio 
+    git clone https://github.com/proria1999/mgcss-track-L2-G1.git 
+    cd mgcss-track-L2-G1 
+    Paso 2: Compilar y Ejecutar Tests 
+    mvn clean verify 
+    Este comando compila el código, ejecuta tests unitarios e integración, genera reporte de cobertura 
+    con JaCoCo y ejecuta análisis de calidad. 
+    Paso 3: Ejecutar la Aplicación 
+    ● Opción A - Con Maven (desarrollo): 
+    mvn spring-boot:run 
+    ● Opción B - Con JAR compilado: 
+    mvn clean package 
+    java -jar target/proyecto-0.0.1-SNAPSHOT.jar 
+    La aplicación estará en: http://localhost:8080 
+    Paso 4: Acceder a Herramientas Integradas 
+    Herramienta 
+    URL 
+    Swagger/OpenAPI 
+    http://localhost:8080/swagger-ui.html 
+    H2 Console 
+    http://localhost:8080/h2-console 
+  2.3 Instalación desde Release de GitHub 
+    Si prefieres instalar desde la release publicada: 
+    1. Ve a: https://github.com/proria1999/mgcss-track-L2-G1/releases 2. Descarga el JAR de la versión deseada 
+    3. Ejecuta: java -jar proyecto-0.0.1-SNAPSHOT.jar 
+  2.4 Verificación de Instalación 
+    Si la instalación fue exitosa: 
+    ● mvn clean verify ejecuta sin errores 
+    ● La aplicación arranca sin excepciones en puerto 8080
+    ● Swagger es accesible en /swagger-ui.html 
+    ● Tests pasan al 100% 
+    ● Cobertura >= 96% (visible en SonarCloud) 
