@@ -34,7 +34,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./mvnw verify sonar:sonar -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=proria1999 -Dsonar.projectKey=proria1999_mgcss-track-l2-g1 -Dsonar.qualitygate.wait=true -Dsonar.branch.name=main
+        run: ./mvnw verify sonar:sonar -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=proria1999 -Dsonar.projectKey=mgcss-track-L2-G1 -Dsonar.qualitygate.wait=true -Dsonar.branch.name=main
 
       # FASE 3: Compilar y empaquetar
       - name: Build
