@@ -14,7 +14,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0  
 
@@ -25,29 +25,23 @@ jobs:
           java-version: 17
           cache: maven
 
-          # NUEVO PASO: Otorgar permisos de ejecución al wrapper de Maven
       - name: Dar permisos de ejecucion a mvnw
         run: chmod +x mvnw
 
-# FASE 5: Control de calidad (Obligatorio)
-      - name: Ejecutar Tests y Análisis de SonarCloud
+      # FASE 5 y FASE 3 UNIFICADAS: Compila, prueba, genera artefacto y pasa el Quality Gate en un solo paso
+      - name: Ejecutar Tests, Compilación y Análisis de SonarCloud
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          ./mvnw verify sonar:sonar \
+          ./mvnw clean verify sonar:sonar \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.organization=proria1999 \
             -Dsonar.projectKey=proria1999_mgcss-track-L2-G1 \
             -Dsonar.token=${{ secrets.SONAR_TOKEN }} \
-            -Dsonar.qualitygate.wait=true \
-            -Dsonar.branch.name=main
+            -Dsonar.qualitygate.wait=true
 
-      # FASE 3: Compilar y empaquetar
-      - name: Build
-        run: ./mvnw clean package -DskipTests
-
-      # FASE 3: Renombrar el artefacto
+      # FASE 3: Renombrar el artefacto (ya generado en el paso anterior, no hace falta recompilar)
       - name: Rename artifact
         run: |
           cp target/*.jar target/app-${{ github.ref_name }}.jar
@@ -57,9 +51,9 @@ jobs:
         run: |
           docker build -t mgcss-track:${{ github.ref_name }} .
 
-      # FASE 3: Publicar la Release con el SHA del profesor
+      # FASE 3: Publicar la Release en GitHub adjuntando el Asset
       - name: Create release
-        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
           name: Release ${{ github.ref_name }}
