@@ -19,7 +19,7 @@ jobs:
           fetch-depth: 0  
 
       - name: Setup Java
-        uses: actions/setup-java@b66d3315b576a8a5ae01014e444d32a4e525414d
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
