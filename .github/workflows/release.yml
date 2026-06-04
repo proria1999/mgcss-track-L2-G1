@@ -29,12 +29,18 @@ jobs:
       - name: Dar permisos de ejecucion a mvnw
         run: chmod +x mvnw
 
-# FASE 5: Control de calidad (Obligatorio)
+      # FASE 5: Control de calidad (Obligatorio)
       - name: Ejecutar Tests y Análisis de SonarCloud
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./mvnw verify sonar:sonar -Dsonar.host.url=https://sonarcloud.io -Dsonar.qualitygate.wait=true -Dsonar.branch.name=main
+        run: |
+          ./mvnw verify sonar:sonar \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.organization=proria1999 \
+            -Dsonar.projectKey=proria1999_mgcss-track-l2-g1 \
+            -Dsonar.qualitygate.wait=true \
+            -Dsonar.branch.name=main
 
       # FASE 3: Compilar y empaquetar
       - name: Build
