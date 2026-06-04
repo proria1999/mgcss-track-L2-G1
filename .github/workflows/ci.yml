@@ -26,7 +26,7 @@ jobs:
       - name: Dar permisos de ejecucion a mvnw
         run: chmod +x mvnw
 
-      # Compilación y Análisis con organización, URL y tu clave con L2-G1
+      # Compilación y Análisis asegurando la inyección directa del Token
       - name: Build and verify with Maven 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -35,5 +35,5 @@ jobs:
           ./mvnw -B verify sonar:sonar \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.organization=proria1999 \
-            -Dsonar.projectKey=proria1999_mgcss-track-L2-G1
-        
+            -Dsonar.projectKey=proria1999_mgcss-track-L2-G1 \
+            -Dsonar.token=${{ secrets.SONAR_TOKEN }}
