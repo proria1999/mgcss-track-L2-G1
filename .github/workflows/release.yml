@@ -1,5 +1,6 @@
 name: CD Release Pipeline
 
+# El pipeline se activa ÚNICAMENTE al hacer push de un tag que empiece por 'v' (ej. v1.1.0)
 on:
   push:
     tags:
@@ -10,41 +11,42 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      # 1. Hacer checkout usando el SHA estable de v4.2.2
+      # 1. Hacer checkout del código fuente
       - name: Checkout del código
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        uses: actions/checkout@v4
         with:
-          fetch-depth: 0 
+          fetch-depth: 0 # Esencial para que SonarQube analice el histórico de commits
 
-      # 2. Configurar el entorno de Java usando el SHA estable de v4.4.0
+      # 2. Configurar el entorno de Java
       - name: Configurar JDK 17
-        uses: actions/setup-java@3a4f6e1af504cf6a31855fa1989b52a90d1708d3 # v4.4.0
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
           cache: 'maven'
 
       # FASE 5: Control de calidad antes de la release (Quality Gate)
+      # Forzamos a Sonar a asociar el Tag con 'main' para que no falle por HEAD descodificado
       - name: Ejecutar Tests y Análisis de SonarCloud
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./mvnw verify sonar:sonar -Dsonar.qualitygate.wait=true
+        run: ./mvnw verify sonar:sonar -Dsonar.qualitygate.wait=true -Dsonar.branch.name=main
 
       # FASE 3: Compilar el proyecto y generar el artefacto .jar ejecutable
       - name: Generar artefacto ejecutable (.jar)
         run: ./mvnw package -DskipTests
 
-      # FASE 3: Construir la imagen Docker utilizando el tag como versión
+      # FASE 3 (Paso 3.2): Construir la imagen Docker utilizando el tag como versión
       - name: Construir Imagen Docker
         run: |
           docker build -t mgcss-track:${{ github.ref_name }} .
 
-      # FASE 3: Publicar la Release en GitHub usando el SHA proporcionado por el profesor
+      # FASE 3: Publicar la Release automáticamente en GitHub y adjuntar el .jar
       - name: Publicar Release en GitHub
-        uses: softprops/action-gh-release@7930ab8db36867eb254ced5b3e42e345d011432e # SHA seguro de v2
+        uses: softprops/action-gh-release@v2
         with:
-          files: target/*.jar 
-          generate_release_notes: true 
+          files: target/*.jar # Adjunta el .jar generado como asset de la release
+          generate_release_notes: true # Autogenera el apartado de notas basándose en commits
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
