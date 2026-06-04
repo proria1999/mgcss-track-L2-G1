@@ -44,7 +44,7 @@ jobs:
 
       # FASE 3: Publicar la Release automáticamente en GitHub y adjuntar el .jar
       - name: Publicar Release en GitHub
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@7930ab8db36867eb254ced5b3e42e345d011432e # v2
         with:
           files: target/*.jar # Adjunta el .jar generado como asset de la release
           generate_release_notes: true # Autogenera el apartado de notas basándose en commits
