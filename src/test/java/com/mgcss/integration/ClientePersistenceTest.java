@@ -20,7 +20,7 @@ import java.util.Optional;
 class ClientePersistenceTest {
 
     @Autowired
-    private JpaClienteRepository repository; //
+    private JpaClienteRepository repository; // esto es una prueba
 
     @Autowired
     private TestEntityManager entityManager;
